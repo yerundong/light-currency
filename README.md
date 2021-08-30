@@ -5,9 +5,9 @@
 #### #特性
 
 * 压缩之后文件大小约为3kb
-* 将数字格式化成货币格式字符串
-* 将货币格式字符串解析成数字
-* 链式操作
+* 支持将数字格式化成货币格式字符串
+* 支持将货币格式字符串解析成数字
+* 支持链式操作
 * 支持拓展实例方法，丰富对货币的操作（比如货币的数学运算）
 
 ## 安装
@@ -107,10 +107,10 @@ cry.setConfig({
 
 
 
-### 值
+### 实例值
 
-- `cry.number` number值，Number类型
-- `cry.value` 精确值，String类型
+- `number` number值，Number类型
+- `value` 精确值，String类型
 
 ```
 const cry = new Currency('1000')
@@ -130,9 +130,11 @@ cry.value;// 2000
 
 ### 解析
 
+支持将任意格式的货币字符串解析成数字：
+
 ```
-Currency.parse('$123,456*123456', {
-    prefix: '$', 
+Currency.parse('€123,456*123456', {
+    prefix: '€', 
     decimalSeparator: '*', 
     groupSeparator: ',', 
     groupSize: 3, 
@@ -144,9 +146,9 @@ Currency.parse('$123,456*123456', {
 
 ### 拓展
 
-支持可拓展实例方法
-
 `Currency.extend(methodName, function)`
+
+支持拓展实例方法，丰富对货币的操作性。
 
 比如，将 [decimal.js](https://github.com/MikeMcl/decimal.js) 数学库中的 `add` 和 `toFixed` 方法添加如实例方法中：
 
@@ -155,7 +157,7 @@ import Decimal from 'decimal.js'
 import Currency from 'light-currency'
 
 const add = Decimal.add.bind(Decimal)
-export const toFixed = (value, dp, rm) => new Decimal(value).toFixed(dp, rm).valueOf()
+const toFixed = (value, dp, rm) => new Decimal(value).toFixed(dp, rm).valueOf()
 
 Currency.extend('add', function(value){
 	return this.setValue(add(this.value, value).valueOf())
