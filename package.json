@@ -1,0 +1,25 @@
+{
+  "name": "light-currency",
+  "version": "1.0.19",
+  "description": "A small, lightweight javascript library for working with currency values.",
+  "main": "dist/light-currency.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yerundong/light-currency.git"
+  },
+  "keywords": [
+    "currency",
+    "format",
+    "money",
+    "accounting",
+    "number",
+    "parse",
+    "precision",
+    "decimal"
+  ],
+  "author": "yerundong",
+  "license": "ISC"
+}
