@@ -18,14 +18,14 @@
 npm i light-currency -S
 ```
 
-#### #引入
-
 ```js
 import Currency from 'light-currency'
 const Currency = require('light-currency')
 ```
 
+#### script
 
+<script src="./light-currency.min.js"></script>
 
 ## 用法
 
@@ -34,14 +34,28 @@ Currency接受数字、字符串类型数据作为值。
 ```
 new Currency(1000);// 1000
 new Currency('1000');// 1000
-new Currency('-$1,000,000.00');// -1000000
+```
+
+JS 对 Number 类型的数字有数位限制，数位过多可能造成精度丢失，所以**大数位数字推荐使用 String 类型的值**。
+
+```
+new Currency(123456789123456789);// 123456789123456780
+new Currency("123456789123456789");// "123456789123456789"
 ```
 
 
 
 ### 创建实例
 
-`new Currency(value, [, config])`
+`new Currency(value [, config])`
+
+`Currency.getInstance(value [, config])`
+
+构造器和Currency.getInstance()支持解析**数字（1000）、字符串类型数字（"1000"）、常规货币格式的字符串类型数字（"$1,000"）**。
+
+config 参数用以覆盖实例的 config 选项，实例的 config 的默认值来自于静态 config（Currency.config）
+
+如果需要解析**特殊货币格式的字符串类型数字**，则使用Currency.parse()，并传入对应格式的config，详见[解析](### 解析)。
 
 ```js
 const cry1 = new Currency('123456789.123456789')
@@ -53,15 +67,22 @@ const cry3 = Currency.parse('123456789.123456789')
 
 ### 格式化
 
-`cry.format(value, [, config])`
+`cry.format(value [, config])`
 
 ```js
 const cry = new Currency('123456789.123456789')
+
 const foo = cry.format();// '$123,456,789.123456789'
+
 const bar = cry.format({
 	prefix: '￥',
     groupSize: 4
 });// '￥1,2345,6789.123456789'
+
+cry.setConfig({
+    prefix: '€',
+    groupSize: 3
+}).format();// '€123,456,789.123456789'
 ```
 
 
@@ -112,10 +133,18 @@ cry.setConfig({
 - `number` number值，Number类型
 - `value` 精确值，String类型
 
+注意：JS 对 Number 类型的数字有数位限制，数位过多可能造成精度丢失，所以大数位数字推荐使用 String 类型的 value。
+
 ```
 const cry = new Currency('1000')
 cry.number;// 1000
 cry.value;// '1000'
+```
+
+```
+const cry = new Currency("123456789123456789.123456789")
+cry.number;// 123456789123456780 (精度丢失)
+cry.value;// "123456789123456789.123456789"
 ```
 
 设置实例的值：
@@ -124,21 +153,32 @@ cry.value;// '1000'
 const cry = new Currency('1000')
 cry.setValue('2000')
 cry.value;// 2000
+
+// 返回原实例，支持链式写法：
+cry.setValue('3000').format();
 ```
 
 
 
 ### 解析
 
-支持将任意格式的货币字符串解析成数字：
+`Currency.parse(value [, config]）`
+
+支持将任意格式的货币字符串解析成数字，返回实例
+
+
+
+value 如果是常规格式货币值，则不需要传入 config 也可解析：
+
+```
+Currency.parse('€123,456.123456').value;// 123456.123456
+```
+
+value 如果是非常规格式货币值，则需要传入对应格式的 config 解析：
 
 ```
 Currency.parse('€123,456*123456', {
-    prefix: '€', 
     decimalSeparator: '*', 
-    groupSeparator: ',', 
-    groupSize: 3, 
-    suffix: ''
 }).value;// 123456.123456
 ```
 
@@ -146,9 +186,11 @@ Currency.parse('€123,456*123456', {
 
 ### 拓展
 
-`Currency.extend(methodName, function)`
+`Currency.extend(methodName, handler)`
 
 支持拓展实例方法，丰富对货币的操作性。
+
+为了保持 light-currency 的纯粹性和轻量性，作者并没有将数学运算包含在其中，如果需要，可通过拓展方法添加数学运算方法。
 
 比如，将 [decimal.js](https://github.com/MikeMcl/decimal.js) 数学库中的 `add` 和 `toFixed` 方法添加如实例方法中：
 
