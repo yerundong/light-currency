@@ -40,6 +40,8 @@ const Currency = require('light-currency')
 
 Currency接受数字、字符串类型数据作为构造器的值。
 
+**注：以下的`cur`代表Currency类的实例对象。**
+
 ```
 new Currency(1000);// 1000
 new Currency('1000');// 1000
@@ -115,8 +117,8 @@ new Currency('1000').toDP(2).value;// 1000
   return：{Currency}，返回Currency实例
   
   ```js
-  const cry1 = new Currency('123456789.123456789')
-  const cry2 = Currency.getInstance('123456789.123456789')
+  const cur1 = new Currency('123456789.123456789')
+  const cur2 = Currency.getInstance('123456789.123456789')
   ```
   
   
@@ -125,7 +127,7 @@ new Currency('1000').toDP(2).value;// 1000
 
 - 方法
 
-  `cry.format([config])`
+  `cur.format([config])`
 
 - 参数说明
 
@@ -137,16 +139,16 @@ new Currency('1000').toDP(2).value;// 1000
 - 示例
 
   ```js
-  const cry = new Currency('123456789.123456789')
+  const cur = new Currency('123456789.123456789')
   
-  const foo = cry.format();// '$123,456,789.123456789'
+  const foo = cur.format();// '$123,456,789.123456789'
   
-  const bar = cry.format({
+  const bar = cur.format({
   	prefix: '￥',
       groupSize: 4
   });// '￥1,2345,6789.123456789'
   
-  cry.setConfig({
+  cur.setConfig({
       prefix: '€',
       groupSize: 3
   }).format();// '€123,456,789.123456789'
@@ -171,8 +173,8 @@ light-currency 中提供**三种**格式化配置，以便更灵活的操作。
 三种配置为：
 
 - 静态配置（Currency.config）
-- 实例配置（cry.config）
-- 即时配置（format(config)）
+- 实例配置（cur.config）
+- 即时配置（cur.format(config)）
 
 执行format时，采用config的优先顺序是：即时配置 > 实例配置 > 静态配置
 
@@ -194,7 +196,7 @@ light-currency 中提供**三种**格式化配置，以便更灵活的操作。
 }
 ```
 
-通过静态方法 setConfig 修改静态配置：
+通过静态方法Currency.setConfig修改静态配置：
 
 ```
 Currency.setConfig({
@@ -216,44 +218,44 @@ Currency.setConfig({
 
 **实例配置：**
 
-实例配置存放在cry.config 下
+实例配置存放在cur.config 下
 
 设置实例配置通过实例化操作时传入参数：
 
 ```
-const cry = new Currency('10000', {
+const cur = new Currency('10000', {
 	prefix: '￥',
 	 groupSize: 4, 
 })
-cry.format();// ￥1,0000
+cur.format();// ￥1,0000
 ```
 
-也可以通过实例方法 setConfig 设置：
+也可以通过实例方法cur.setConfig 设置：
 
 ```js
-const cry = new Currency('10000')
-cry.setConfig({
+const cur = new Currency('10000')
+cur.setConfig({
 	prefix: '￥',
 	 groupSize: 4, 
 })
-cry.format();// ￥1,0000
+cur.format();// ￥1,0000
 ```
 
 
 
 **即时配置：**
 
-即时配置是通过format方法的参数传入，用完即消失，不修改实例配置和静态配置，优先级是最高的。
+即时配置是通过cur.format方法的参数传入，用完即消失，不修改实例配置和静态配置，优先级是最高的。
 
 ```js
-const cry = new Currency('10000');
+const cur = new Currency('10000');
 
-cry.format({
+cur.format({
 	prefix: '￥',
 	 groupSize: 4, 
 });// ￥1,0000
 
-cry.format();// $10,000
+cur.format();// $10,000
 ```
 
 
@@ -262,28 +264,28 @@ cry.format();// $10,000
 
 #### 获取金额数值
 
-- number：{Number}，数字数值
-- value：{String}，精确数值
+- `cur.number`：{Number}，数字数值
+- `cur.value`：{String}，精确数值
 
 **注：value和number都是对实例的金额数值的储存，但Js 对 Number 类型的数字有数位限制，数位过多可能造成精度丢失，所以大数位数字推荐使用 String 类型的 value。**
 
 ```
-const cry = new Currency('1000')
-cry.number;// 1000
-cry.value;// '1000'
+const cur = new Currency('1000')
+cur.number;// 1000
+cur.value;// '1000'
 ```
 
 ```
-const cry = new Currency("123456789123456789.123456789")
-cry.number;// 123456789123456780 (精度丢失)
-cry.value;// "123456789123456789.123456789"
+const cur = new Currency("123456789123456789.123456789")
+cur.number;// 123456789123456780 (精度丢失)
+cur.value;// "123456789123456789.123456789"
 ```
 
 #### 设置金额数值：
 
 - 方法
 
-  `setValue(value)`
+  `cur.setValue(value)`
 
 - 参数说明
 
@@ -296,9 +298,9 @@ cry.value;// "123456789123456789.123456789"
 - 示例
 
 ```
-const cry = new Currency('1000')
-cry.setValue('2000')
-cry.value;// '2000'
+const cur = new Currency('1000')
+cur.setValue('2000')
+cur.value;// '2000'
 ```
 
 
@@ -408,7 +410,10 @@ cry.value;// '2000'
 
 ```js
 npm i -S light-currency-plugin-math
-import Currency from '@/cry/light-currency'
+```
+
+```js
+import Currency from 'light-currency'
 import lightCurrencyPluginMath from 'light-currency-plugin-math'
 
 Currency.extend(lightCurrencyPluginMath)

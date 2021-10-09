@@ -40,6 +40,8 @@ const Currency = require('light-currency')
 
 The Currency class accepts Number or String data as constructor parameters.
 
+**p.s. The following `cur` stands for an instance of `Currency`**
+
 ```
 new Currency(1000);// 1000
 new Currency('1000');// 1000
@@ -104,7 +106,7 @@ new Currency('1000').toDP(2).value;// 1000
   - Using constructor：`new Currency(value [, config])`
   - Using static method：`Currency.getInstance(value [, config])`
 
-- Parameters
+- Parameter
 
   - value：{Number|String}，support  Number type (1000), String type number ("1000"), String type number in common currency format ("$1000") .
 
@@ -115,8 +117,8 @@ new Currency('1000').toDP(2).value;// 1000
   {Currency}，Return the Currency instance
   
   ```js
-  const cry1 = new Currency('123456789.123456789')
-  const cry2 = Currency.getInstance('123456789.123456789')
+  const cur1 = new Currency('123456789.123456789')
+  const cur2 = Currency.getInstance('123456789.123456789')
   ```
   
   
@@ -125,9 +127,9 @@ new Currency('1000').toDP(2).value;// 1000
 
 - Method
 
-  `cry.format([config])`
+  `cur.format([config])`
 
-- Parameters
+- Parameter
 
   config：{Object}，it is Instant format configuration， If it is not passed in,  it defaults to the current instance configuration，see[Format configuration](###Format configuration)
 
@@ -137,16 +139,16 @@ new Currency('1000').toDP(2).value;// 1000
 - Example
 
   ```js
-  const cry = new Currency('123456789.123456789')
+  const cur = new Currency('123456789.123456789')
   
-  const foo = cry.format();// '$123,456,789.123456789'
+  const foo = cur.format();// '$123,456,789.123456789'
   
-  const bar = cry.format({
+  const bar = cur.format({
   	prefix: '￥',
       groupSize: 4
   });// '￥1,2345,6789.123456789'
   
-  cry.setConfig({
+  cur.setConfig({
       prefix: '€',
       groupSize: 3
   }).format();// '€123,456,789.123456789'
@@ -171,8 +173,8 @@ The light-currency provides three formatting configurations for more flexibility
  three formatting configurations：
 
 - Static Configuration(Currency.config)
-- Instance Configuration(cry.config)
-- Instant Configuration(format(config))
+- Instance Configuration(cur.config)
+- Instant Configuration(cur.format(config))
 
 When executing the format method, config takes precedence in the following order: Instant Configuration > Instance Configuration > Static Configuration
 
@@ -194,7 +196,7 @@ The default value for static configuration is:
 }
 ```
 
-Modify the static configuration through the static method `setConfig`:
+Modify the static configuration through the static method `Currency.setConfig`:
 
 ```
 Currency.setConfig({
@@ -216,44 +218,44 @@ Currency.setConfig({
 
 **Instance Configuration：**
 
-Instance Configuration is stored under cry.config
+Instance Configuration is stored under `cur.config`
 
 Modify the instance configuration through instantiating and passing in parameters:
 
 ```
-const cry = new Currency('10000', {
+const cur = new Currency('10000', {
 	prefix: '￥',
 	 groupSize: 4, 
 })
-cry.format();// ￥1,0000
+cur.format();// ￥1,0000
 ```
 
-can also use the instance method `setconfig `to set:
+can also use the instance method `cur.setconfig `to set:
 
 ```js
-const cry = new Currency('10000')
-cry.setConfig({
+const cur = new Currency('10000')
+cur.setConfig({
 	prefix: '￥',
 	 groupSize: 4, 
 })
-cry.format();// ￥1,0000
+cur.format();// ￥1,0000
 ```
 
 
 
 **Instant Configuration：**
 
-Instant configuration is passed in through the parameters of the `format ` method and disappears when used up. Instance configuration and static configuration are not modified. The priority is the highest.
+Instant configuration is passed in through the parameters of the `cur.format ` method and disappears when used up. Instance configuration and static configuration are not modified. The priority is the highest.
 
 ```js
-const cry = new Currency('10000');
+const cur = new Currency('10000');
 
-cry.format({
+cur.format({
 	prefix: '￥',
 	 groupSize: 4, 
 });// ￥1,0000
 
-cry.format();// $10,000
+cur.format();// $10,000
 ```
 
 
@@ -262,30 +264,30 @@ cry.format();// $10,000
 
 ### Get Amount Value
 
-- number：{Number}，Numerical value
-- value：{String}，Exact value
+- `cur.number`：{Number}，Numerical value
+- `cur.value`：{String}，Exact value
 
 **P.S. both value and number are used to store the amount value of the instance, but Js limits the number of digits. Too many digits may cause loss of precision. Therefore, String type value is recommended for large digits.**
 
 ```
-const cry = new Currency('1000')
-cry.number;// 1000
-cry.value;// '1000'
+const cur = new Currency('1000')
+cur.number;// 1000
+cur.value;// '1000'
 ```
 
 ```
-const cry = new Currency("123456789123456789.123456789")
-cry.number;// 123456789123456780 (Lost accuracy)
-cry.value;// "123456789123456789.123456789"
+const cur = new Currency("123456789123456789.123456789")
+cur.number;// 123456789123456780 (Lost accuracy)
+cur.value;// "123456789123456789.123456789"
 ```
 
 ### Set Amount Value：
 
 - Method
 
-  `setValue(value)`
+  `cur.setValue(value)`
 
-- Parameters
+- Parameter
 
   value：{Number|String}，This parameter is consistent with the value of the construction instance，support  Number type (1000), String type number ("1000"), String type number in common currency format ("$1000") .
 
@@ -296,9 +298,9 @@ cry.value;// "123456789123456789.123456789"
 - Example
 
 ```
-const cry = new Currency('1000')
-cry.setValue('2000')
-cry.value;// '2000'
+const cur = new Currency('1000')
+cur.setValue('2000')
+cur.value;// '2000'
 ```
 
 
@@ -311,7 +313,7 @@ cry.value;// '2000'
 
   The parse method supports parsing a currency string in any format into a number and returning an instance
 
-- Parameters
+- Parameter
 
   value：{Number|String}，support  Number type (1000), String type number ("1000"), String type number in currency format ("$1000.00") .
 
@@ -347,7 +349,7 @@ Through the extend method, you can freely add more personalized instance methods
 
   `Currency.extend(options)`
 
-- Parameters
+- Parameter
 
   options： {Object | Array}，If options is Object type, add a single instance method; if Array type, add multiple instance methods (that is using plugin)
 
@@ -383,7 +385,7 @@ Through the extend method, you can freely add more personalized instance methods
 
 - Return
 
-  return：null
+  null
 
 - Example
 
@@ -408,7 +410,10 @@ The author has encapsulated the commonly used mathematical operation,rounding op
 
 ```js
 npm i -S light-currency-plugin-math
-import Currency from '@/cry/light-currency'
+```
+
+```js
+import Currency from 'light-currency'
 import lightCurrencyPluginMath from 'light-currency-plugin-math'
 
 Currency.extend(lightCurrencyPluginMath)

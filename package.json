@@ -1,6 +1,6 @@
 {
   "name": "light-currency",
-  "version": "1.0.31",
+  "version": "1.0.33",
   "description": "A small, lightweight javascript library for working with currency values.",
   "author": "yerundong",
   "license": "MIT",
@@ -19,6 +19,7 @@
     "url": "https://github.com/yerundong/light-currency.git"
   },
   "keywords": [
+    "light-currency",
     "currency",
     "format",
     "money",
