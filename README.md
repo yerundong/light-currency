@@ -6,15 +6,13 @@ It aims to solve the problems of currency format and the most basic accuracy.
 
 # Features
 
-- 0 dependencies
-
 * After compression, the file size is about 3KB
 * Supports formatting numbers into strings in currency format
 * Supports parsing strings in currency format into numbers
 * Support chain operation
 * Supports expanding instance methods and using plugins to enrich currency operations (such as mathematical operations)
 
-[The sky is a little dark, please light up this star😁](https://github.com/yerundong/light-currency)
+[I'm honored that it may be helpful to you. Please light up a star. Thank you!](https://github.com/yerundong/light-currency)
 
 # Install
 
@@ -429,4 +427,10 @@ new Currency(1).toDP(3).value;// // '1'
 ```
 
 For details, please see [light-currency-plugin-math](https://www.npmjs.com/package/light-currency-plugin-math).
+
+
+
+# License
+
+light-currency is licensed under a [MIT License](https://github.com/yerundong/light-currency/blob/master/license).
 

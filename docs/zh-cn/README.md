@@ -12,7 +12,7 @@
 * 支持链式操作
 * 支持拓展实例方法和使用插件，丰富对货币的操作（比如货币的数学运算）
 
-[天有点黑，请点亮一颗星星😁](https://github.com/yerundong/light-currency)
+[如果它对你有帮助，请帮忙点亮一颗星星，谢谢~](https://github.com/yerundong/light-currency)
 
 # 安装
 
@@ -427,3 +427,8 @@ new Currency(1).toDP(3).value;// // '1'
 ```
 
 详细说明请移步[light-currency-plugin-math](https://www.npmjs.com/package/light-currency-plugin-math)。
+
+# 许可证
+
+[MIT License](https://github.com/yerundong/light-currency/blob/master/license)
+
