@@ -1,9 +1,9 @@
 /**
- * light-currency - v1.0.29
- *  https://github.com/yerundong/light-currency.git
- *  
- *  Copyright (c) 2021 yerundong
- *  Released under MIT license
+ * light-currency - v1.0.33
+ * https://github.com/yerundong/light-currency.git
+ * 
+ * Copyright (c) 2021 yerundong
+ * Released under MIT license
  */
 
 (function (global, factory) {
@@ -473,14 +473,14 @@
     getterFor: getterFor
   };
 
-  var FunctionPrototype = Function.prototype;
+  var FunctionPrototype$1 = Function.prototype;
   // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
   var getDescriptor = descriptors && Object.getOwnPropertyDescriptor;
 
-  var EXISTS = has$1(FunctionPrototype, 'name');
+  var EXISTS = has$1(FunctionPrototype$1, 'name');
   // additional protection from minified / mangled / dropped function names
   var PROPER = EXISTS && (function something() { /* empty */ }).name === 'something';
-  var CONFIGURABLE = EXISTS && (!descriptors || (descriptors && getDescriptor(FunctionPrototype, 'name').configurable));
+  var CONFIGURABLE = EXISTS && (!descriptors || (descriptors && getDescriptor(FunctionPrototype$1, 'name').configurable));
 
   var functionName = {
     EXISTS: EXISTS,
@@ -736,16 +736,16 @@
   // eslint-disable-next-line es/no-object-assign -- safe
   var $assign = Object.assign;
   // eslint-disable-next-line es/no-object-defineproperty -- required for testing
-  var defineProperty = Object.defineProperty;
+  var defineProperty$1 = Object.defineProperty;
 
   // `Object.assign` method
   // https://tc39.es/ecma262/#sec-object.assign
   var objectAssign = !$assign || fails(function () {
     // should have correct order of operations (Edge bug)
-    if (descriptors && $assign({ b: 1 }, $assign(defineProperty({}, 'a', {
+    if (descriptors && $assign({ b: 1 }, $assign(defineProperty$1({}, 'a', {
       enumerable: true,
       get: function () {
-        defineProperty(this, 'b', {
+        defineProperty$1(this, 'b', {
           value: 3,
           enumerable: false
         });
@@ -785,6 +785,29 @@
   _export({ target: 'Object', stat: true, forced: Object.assign !== objectAssign }, {
     assign: objectAssign
   });
+
+  var FUNCTION_NAME_EXISTS = functionName.EXISTS;
+  var defineProperty = objectDefineProperty.f;
+
+  var FunctionPrototype = Function.prototype;
+  var FunctionPrototypeToString = FunctionPrototype.toString;
+  var nameRE = /^\s*function ([^ (]*)/;
+  var NAME = 'name';
+
+  // Function instances `.name` property
+  // https://tc39.es/ecma262/#sec-function-instances-name
+  if (descriptors && !FUNCTION_NAME_EXISTS) {
+    defineProperty(FunctionPrototype, NAME, {
+      configurable: true,
+      get: function () {
+        try {
+          return FunctionPrototypeToString.call(this).match(nameRE)[1];
+        } catch (error) {
+          return '';
+        }
+      }
+    });
+  }
 
   // `Object.defineProperties` method
   // https://tc39.es/ecma262/#sec-object.defineproperties
@@ -1069,21 +1092,44 @@
         return new Currency(_parse(value, config).value);
       }
       /**
-       * Extended instance method
-       * @param {String} name
-       * @param {Function} handler
+       * Extended an instance method or an plugin(a collection of several instance methods)
+       * @param { Object | Array } options
        */
 
     }, {
       key: "extend",
-      value: function extend(name, handler) {
-        Currency.prototype[name] = function () {
-          for (var _len = arguments.length, params = new Array(_len), _key = 0; _key < _len; _key++) {
-            params[_key] = arguments[_key];
-          }
+      value: function extend(options) {
+        var type = getType(options);
 
-          return handler.apply(this, params);
-        };
+        if (type === 'Object') {
+          var name = options.name,
+              handler = options.handler;
+
+          Currency.prototype[name] = function () {
+            for (var _len = arguments.length, params = new Array(_len), _key = 0; _key < _len; _key++) {
+              params[_key] = arguments[_key];
+            }
+
+            return handler.apply(this, params);
+          };
+        } else if (type === 'Array') {
+          var _loop = function _loop(i, item) {
+            var name = item.name,
+                handler = item.handler;
+
+            Currency.prototype[name] = function () {
+              for (var _len2 = arguments.length, params = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+                params[_key2] = arguments[_key2];
+              }
+
+              return handler.apply(this, params);
+            };
+          };
+
+          for (var i = 0, item; item = options[i]; i++) {
+            _loop(i, item);
+          }
+        }
       }
     }]);
 

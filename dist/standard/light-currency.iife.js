@@ -1,9 +1,9 @@
 /**
- * light-currency - v1.0.29
- *  https://github.com/yerundong/light-currency.git
- *  
- *  Copyright (c) 2021 yerundong
- *  Released under MIT license
+ * light-currency - v1.0.33
+ * https://github.com/yerundong/light-currency.git
+ * 
+ * Copyright (c) 2021 yerundong
+ * Released under MIT license
  */
 
 var Currency = (function () {
@@ -191,21 +191,44 @@ var Currency = (function () {
         return new Currency(_parse(value, config).value);
       }
       /**
-       * Extended instance method
-       * @param {String} name
-       * @param {Function} handler
+       * Extended an instance method or an plugin(a collection of several instance methods)
+       * @param { Object | Array } options
        */
 
     }, {
       key: "extend",
-      value: function extend(name, handler) {
-        Currency.prototype[name] = function () {
-          for (var _len = arguments.length, params = new Array(_len), _key = 0; _key < _len; _key++) {
-            params[_key] = arguments[_key];
-          }
+      value: function extend(options) {
+        var type = getType(options);
 
-          return handler.apply(this, params);
-        };
+        if (type === 'Object') {
+          var name = options.name,
+              handler = options.handler;
+
+          Currency.prototype[name] = function () {
+            for (var _len = arguments.length, params = new Array(_len), _key = 0; _key < _len; _key++) {
+              params[_key] = arguments[_key];
+            }
+
+            return handler.apply(this, params);
+          };
+        } else if (type === 'Array') {
+          var _loop = function _loop(i, item) {
+            var name = item.name,
+                handler = item.handler;
+
+            Currency.prototype[name] = function () {
+              for (var _len2 = arguments.length, params = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+                params[_key2] = arguments[_key2];
+              }
+
+              return handler.apply(this, params);
+            };
+          };
+
+          for (var i = 0, item; item = options[i]; i++) {
+            _loop(i, item);
+          }
+        }
       }
     }]);
 
