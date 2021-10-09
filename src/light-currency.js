@@ -127,13 +127,23 @@ class Currency {
 	}
 
 	/**
-	 * Extended instance method
-	 * @param {String} name
-	 * @param {Function} handler
+	 * Extended an instance method or an plugin(a collection of several instance methods)
+	 * @param { Object | Array } options
 	 */
-	static extend(name, handler) {
-		Currency.prototype[name] = function (...params) {
-			return handler.apply(this, params)
+	static extend(options) {
+		const type = getType(options)
+		if (type === 'Object') {
+			const { name, handler } = options
+			Currency.prototype[name] = function (...params) {
+				return handler.apply(this, params)
+			}
+		} else if (type === 'Array') {
+			for (let i = 0, item; (item = options[i]); i++) {
+				const { name, handler } = item
+				Currency.prototype[name] = function (...params) {
+					return handler.apply(this, params)
+				}
+			}
 		}
 	}
 }
