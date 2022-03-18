@@ -1,6 +1,6 @@
 {
   "name": "light-currency",
-  "version": "1.0.34",
+  "version": "1.0.36",
   "description": "A small, lightweight javascript library for working with currency values.",
   "author": "yerundong",
   "license": "MIT",

@@ -1,8 +1,8 @@
 /**
- * light-currency - v1.0.33
+ * light-currency - v1.0.36
  * https://github.com/yerundong/light-currency.git
  * 
- * Copyright (c) 2021 yerundong
+ * Copyright (c) 2022 yerundong
  * Released under MIT license
  */
 
@@ -1014,32 +1014,34 @@ var Currency = (function () {
             groupSeparator = config_.groupSeparator,
             groupSize = config_.groupSize,
             suffix = config_.suffix;
-        var sign = '',
+        var sign = "",
             ev = this.value;
 
         if (/^-/.test(ev)) {
-          sign = '-';
-          ev = ev.replace(/^-/, '');
+          sign = "-";
+          ev = ev.replace(/^-/, "");
         }
 
         if (/\d/g.test(ev)) {
           // Number of numeric type
-          var arr = ev.split('.');
+          var arr = ev.split(".");
           var intStr = arr[0];
           var decStr = arr[1];
-          var intArr = intStr.split('').reverse();
+          var intArr = intStr.split("").reverse();
           var spArr = [];
 
-          for (var i = groupSize; i < intArr.length; i += groupSize) {
-            spArr.push(i);
+          if (getType(groupSize) === "Number" && groupSize > 0) {
+            for (var i = groupSize; i < intArr.length; i += groupSize) {
+              spArr.push(i);
+            }
+
+            for (var _i = 0; _i < spArr.length; _i++) {
+              var indx = spArr[_i] + _i;
+              intArr.splice(indx, 0, groupSeparator);
+            }
           }
 
-          for (var _i = 0; _i < spArr.length; _i++) {
-            var indx = spArr[_i] + _i;
-            intArr.splice(indx, 0, groupSeparator);
-          }
-
-          var intStr_ = intArr.reverse().join('');
+          var intStr_ = intArr.reverse().join("");
 
           if (decStr) {
             return "".concat(sign).concat(prefix).concat(intStr_).concat(decimalSeparator).concat(decStr).concat(suffix);
@@ -1098,7 +1100,7 @@ var Currency = (function () {
       value: function extend(options) {
         var type = getType(options);
 
-        if (type === 'Object') {
+        if (type === "Object") {
           var name = options.name,
               handler = options.handler;
 
@@ -1109,7 +1111,7 @@ var Currency = (function () {
 
             return handler.apply(this, params);
           };
-        } else if (type === 'Array') {
+        } else if (type === "Array") {
           var _loop = function _loop(i, item) {
             var name = item.name,
                 handler = item.handler;
@@ -1134,11 +1136,11 @@ var Currency = (function () {
   }();
 
   _defineProperty(Currency, "config", {
-    prefix: '$',
-    decimalSeparator: '.',
-    groupSeparator: ',',
+    prefix: "$",
+    decimalSeparator: ".",
+    groupSeparator: ",",
     groupSize: 3,
-    suffix: ''
+    suffix: ""
   });
 
   function getType(value) {
@@ -1146,8 +1148,8 @@ var Currency = (function () {
   }
 
   function isLikeNumber(value) {
-    if (!['String', 'Number'].includes(getType(value))) return false;
-    if (value === '') return false;
+    if (!["String", "Number"].includes(getType(value))) return false;
+    if (value === "") return false;
     var value_ = Number(value);
     if (Number.isNaN(value_)) return false;
     return true;
@@ -1167,22 +1169,22 @@ var Currency = (function () {
       isNaN: null
     };
 
-    if (type === 'Number') {
+    if (type === "Number") {
       parseObj.number = value;
 
       if (Object.is(value, -0)) {
         // -0 is handled separately because -0.tostring() is' 0 '
-        parseObj.value = '-0';
+        parseObj.value = "-0";
       } else {
         parseObj.value = value.toString();
       }
-    } else if (type === 'String') {
+    } else if (type === "String") {
       var obj = strValParse(value, config);
       parseObj.number = obj.number;
       parseObj.value = obj.value;
     } else {
       parseObj.number = NaN;
-      parseObj.value = 'NaN';
+      parseObj.value = "NaN";
     }
 
     parseObj.isNaN = Number.isNaN(parseObj.number);
@@ -1204,31 +1206,31 @@ var Currency = (function () {
       if (/-.*(?=Infinity)/.test(value)) {
         return {
           number: -Infinity,
-          value: '-Infinity'
+          value: "-Infinity"
         };
       } else {
         return {
           number: Infinity,
-          value: 'Infinity'
+          value: "Infinity"
         };
       }
     }
 
-    var ds = config.decimalSeparator || '.';
-    var reg_1 = new RegExp("[^\\d\\".concat(ds, "-]|\\").concat(ds, "(?=.*\\").concat(ds, ")"), 'g');
-    var reg_2 = new RegExp("\\".concat(ds), 'g');
-    value_ = value.replace(reg_1, '').replace(reg_2, '.');
-    var sign = /^-/.test(value_) ? '-' : '';
-    value_ = value_.replace(/-/g, '');
+    var ds = config.decimalSeparator || ".";
+    var reg_1 = new RegExp("[^\\d\\".concat(ds, "-]|\\").concat(ds, "(?=.*\\").concat(ds, ")"), "g");
+    var reg_2 = new RegExp("\\".concat(ds), "g");
+    value_ = value.replace(reg_1, "").replace(reg_2, ".");
+    var sign = /^-/.test(value_) ? "-" : "";
+    value_ = value_.replace(/-/g, "");
 
     if (!isLikeNumber(value_)) {
       return {
         number: NaN,
-        value: 'NaN'
+        value: "NaN"
       };
     }
 
-    value_ = value_.replace(/^0+(?=.)|\.+$/g, '').replace(/^\.+/, '0.');
+    value_ = value_.replace(/^0+(?=.)|\.+$/g, "").replace(/^\.+/, "0.");
     value_ = sign + value_;
     return {
       number: Number(value_),
